@@ -42,7 +42,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     if (number.isNotEmpty && selectedCountryCode != null) {
       ref.read(authControllerProvider.notifier).signInWithNumber(context, '+${selectedCountryCode!.phoneCode} $number');
     }else{
-      snackbar(context, 'error');
+      snackbar(context, 'fill all the fields');
     }
   }
 
