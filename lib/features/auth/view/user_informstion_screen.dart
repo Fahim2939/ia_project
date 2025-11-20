@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ia_project/common/utils/image_picker_helper.dart';
 import 'package:ia_project/common/utils/snackbar.dart';
+import 'package:ia_project/features/auth/controller/auth_controller.dart';
 
 class UserInformstionScreen extends ConsumerStatefulWidget {
   const UserInformstionScreen({super.key});
@@ -14,6 +15,7 @@ class UserInformstionScreen extends ConsumerStatefulWidget {
 
 class _UserInformstionScreenState extends ConsumerState<UserInformstionScreen> {
   File? _image;
+    final TextEditingController nameController = TextEditingController();
   void pickImage(BuildContext context) async {
     final result = await ImagePickerHelper.pickImageBottomSheet(context);
 
@@ -24,6 +26,10 @@ class _UserInformstionScreenState extends ConsumerState<UserInformstionScreen> {
     } else {
       snackbar(context, result.error!);
     }
+  }
+
+  void storeUserData(){
+    ref.read(authControllerProvider.notifier).saveUserDataToFirebase(nameController.text.trim(), _image, context);
   }
 
   @override
@@ -41,8 +47,7 @@ class _UserInformstionScreenState extends ConsumerState<UserInformstionScreen> {
                 children: [
                   CircleAvatar(
                     radius: 70,
-                    backgroundImage: _image != null ? FileImage(_image!) : null,
-                    child: _image == null ? Icon(Icons.person, size: 70) : null,
+                    backgroundImage: _image != null ? FileImage(_image!): NetworkImage('https://static.vecteezy.com/system/resources/previews/024/983/914/non_2x/simple-user-default-icon-free-png.png'),
                   ),
                   IconButton(
                     onPressed: () => pickImage(context),
@@ -50,19 +55,20 @@ class _UserInformstionScreenState extends ConsumerState<UserInformstionScreen> {
                   ),
                 ],
               ),
-              SizedBox(height: 20), 
+              SizedBox(height: 20),
               Row(
                 children: [
                   Container(
                     width: size.width * 0.79,
                     padding: EdgeInsets.all(16),
                     child: TextField(
+                      controller: nameController,
                       decoration: InputDecoration(
                         hint: Text('Enter your name'),
                       ),
                     ),
                   ),
-                  IconButton(onPressed: () {}, icon: Icon(Icons.done)),
+                  IconButton(onPressed: storeUserData, icon: Icon(Icons.done)),
                 ],
               ),
             ],
